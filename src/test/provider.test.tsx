@@ -5,7 +5,8 @@
 import { render, act } from '@testing-library/react';
 import { OidcConfig } from '../provider/auth/config';
 import OIDCContextProvider from '../provider/provider';
-import { mockFlowController } from './mockReducer';
+import * as reducer from '../provider/reducer';
+
 
 
 const mockOidcConfig: OidcConfig = {
@@ -14,29 +15,58 @@ const mockOidcConfig: OidcConfig = {
   clientId: "abc",
   scope: "email",
   oidcUrl: "https://oidc.com/"
-  // add other necessary config properties
 };
 
-// const MockFlowController = jest.fn()
-jest.mock('../provider/reducer', () => ( {flowController:  jest.fn(()=> mockFlowController)}))
+Object.defineProperty(window, 'location', {
+  value: {
+    href: 'http://example.com/callback?code=myCode&state=myState'
+  },
+  writable: true
+});
 
+
+jest.mock('../provider/reducer')
 describe('OIDCContextProvider', () => {
 
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   it('should trigger the token exchange flow', () => {
-    Object.defineProperty(window, "location", {
-      value: {
-        href: 'http://example.com/callback?code=mockCode&state=mockState'
-      },
-    })
-    let component: any;
+
     act(() => {
-      component = render(
+      render(
         <OIDCContextProvider oidcConfig={mockOidcConfig}></OIDCContextProvider>
       )
     })
 
-
+    expect(reducer.flowController).toHaveBeenCalledTimes(1)
 
   })
-  
+
+  it('should not trigger the token exchange flow or setup token refresher', () => {
+    window.location.href = "http://example.com/callback"
+    mockOidcConfig.autoTokenRefresh = false
+    act(() => {
+      render(
+        <OIDCContextProvider oidcConfig={mockOidcConfig}></OIDCContextProvider>
+      )
+    })
+
+    expect(reducer.flowController).toHaveBeenCalledTimes(0)
+
+  })
+
+  it('should not trigger the token exchange flow, but invoke setup token refresher', () => {
+    window.location.href = "http://example.com/callback"
+    act(() => {
+      render(
+        <OIDCContextProvider oidcConfig={mockOidcConfig}></OIDCContextProvider>
+      )
+    })
+
+    expect(reducer.flowController).toHaveBeenCalledTimes(0)
+
+  })
+
 })
