@@ -2,8 +2,7 @@ import { OidcConfig } from "./config"
 
 export const exchangeForToken = async (oidcConfig: OidcConfig, data: URLSearchParams): Promise<any> => {
     
-    const tokenUrl = new URL(oidcConfig.oidcUrl)
-    tokenUrl.pathname = "/token"
+    const tokenUrl = new URL(oidcConfig.oidcUrl + "/token")
     data.append("client_id", oidcConfig.clientId)
     data.append("scope", oidcConfig.scope)
     const response = await fetch(tokenUrl.toString(), {
