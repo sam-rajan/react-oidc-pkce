@@ -1,6 +1,6 @@
 {
   "name": "react-oidc-pkce",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "React Context API provider implementation for Open ID connect Authorization code flow with PKCE",
   "scripts": {
     "build": "rollup -c",
