@@ -16,6 +16,7 @@ export const startAuthFlow = async (oidcState: any, force: boolean) => {
     const authUrl = new URL(config.oidcUrl + "/authorize")
     authUrl.searchParams.append("response_type", "code")
     authUrl.searchParams.append("client_id", config.clientId)
+    authUrl.searchParams.append("redirect_uri" , config.redirectUrl)
     const state = uuidv4()
     authUrl.searchParams.append("state", state)
     authUrl.searchParams.append("scope", config.scope)
@@ -36,6 +37,5 @@ export const startAuthFlow = async (oidcState: any, force: boolean) => {
     }
 
     sessionStorage.setItem(AUTH_DATA, JSON.stringify(authData))
-    //avoiding url encoding
-    window.location.href = authUrl.toString() + "&redirect_uri=" + config.redirectUrl
+    window.location.href = authUrl.toString()
 }
