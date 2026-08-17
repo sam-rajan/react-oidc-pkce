@@ -1,8 +1,9 @@
-import { AUTH_DATA, isCredentialsValid, persistToken } from "./creds";
+import { AUTH_DATA, clearPendingAuthData, isCredentialsValid, persistToken } from "./creds";
 import { OidcConfig } from "./config";
 import { setupRefresher } from "./refresh";
 import { callBackInvoker } from "./callback";
 import { exchangeForToken } from "./exchange";
+import { decodeJwtPayload } from "./utils";
 
 
 export const fetchToken = (state: any) => {
@@ -13,10 +14,25 @@ export const fetchToken = (state: any) => {
     }
 
     const url = new URL(window.location.href)
-    const authData = JSON.parse(sessionStorage.getItem(AUTH_DATA) as string)
     const oidcConfig = state.config as OidcConfig
 
-    if (url.searchParams.get('state') !== authData.state) {
+    const cleanUp = () => {
+        clearPendingAuthData()
+        url.searchParams.delete('code')
+        url.searchParams.delete('state')
+        window.history.replaceState(null, '', url.toString())
+    }
+
+    let authData: { state: string, codeVerifier: string, nonce: string } | null = null
+    try {
+        const rawAuthData = sessionStorage.getItem(AUTH_DATA)
+        authData = rawAuthData ? JSON.parse(rawAuthData) : null
+    } catch {
+        authData = null
+    }
+
+    if (!authData || url.searchParams.get('state') !== authData.state) {
+        cleanUp()
         callBackInvoker(state.callback, 'FAILED')
         return
     }
@@ -28,20 +44,22 @@ export const fetchToken = (state: any) => {
     data.append("code_verifier", authData.codeVerifier)
 
     exchangeForToken(oidcConfig, data).then((result: any) => {
+        const idTokenPayload = decodeJwtPayload(result.id_token)
+        if (idTokenPayload?.nonce !== authData!.nonce) {
+            cleanUp()
+            callBackInvoker(state.callback, 'FAILED')
+            return
+        }
+
         persistToken(result)
+        cleanUp()
         callBackInvoker(state.callback, 'SUCCESS')
         if (state.config.autoTokenRefresh) {
             setupRefresher(state)
         }
     }, (error: any) => {
         console.error("Error:", error);
+        cleanUp()
         callBackInvoker(state.callback, 'FAILED')
     })
 }
-
-
-
-
-
-
-

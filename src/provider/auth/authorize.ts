@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { AUTH_DATA, isCredentialsValid } from "./creds";
+import { AUTH_DATA, clearAuthSession, isCredentialsValid } from "./creds";
 import { arrayBufferToBase64, randomString } from "./utils";
 import { OidcConfig } from "./config";
 import { callBackInvoker } from "./callback";
@@ -12,7 +12,7 @@ export const startAuthFlow = async (oidcState: any, force: boolean) => {
     }
 
     var config: OidcConfig = oidcState.config as OidcConfig
-    sessionStorage.clear()
+    clearAuthSession()
     const authUrl = new URL(config.oidcUrl + "/authorize")
     authUrl.searchParams.append("response_type", "code")
     authUrl.searchParams.append("client_id", config.clientId)

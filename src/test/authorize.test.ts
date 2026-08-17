@@ -3,7 +3,7 @@
  */
 
 import { startAuthFlow } from '../provider/auth/authorize';
-import { isCredentialsValid } from '../provider/auth/creds';
+import { clearAuthSession, isCredentialsValid } from '../provider/auth/creds';
 import { arrayBufferToBase64, randomString } from '../provider/auth/utils';
 import * as invoker from "../provider/auth/callback";
 import { TextEncoder, TextDecoder } from "util";
@@ -19,7 +19,6 @@ const mockOidcState = {
 };
 
 const sessionStorageMock = {
-    clear: jest.fn(),
     setItem: jest.fn()
 }
 
@@ -47,6 +46,7 @@ jest.mock('../provider/auth/utils', () => ({
 }))
 jest.mock('../provider/auth/creds', () => ({
     isCredentialsValid: jest.fn(),
+    clearAuthSession: jest.fn(),
     AUTH_DATA: 'mockAuthData',
 }))
 
@@ -71,7 +71,7 @@ describe('startAuthFlow', () => {
         (randomString as jest.Mock).mockReturnValueOnce('mockCodeVerifier');
         (randomString as jest.Mock).mockReturnValueOnce('mockNonce');
         await startAuthFlow(mockOidcState, true);
-        expect(sessionStorage.clear).toHaveBeenCalled();
+        expect(clearAuthSession).toHaveBeenCalled();
         expect(window.location.href).toBe('http://example.com/oidc/authorize?response_type=code&client_id=mockClientId&redirect_uri=http%3A%2F%2Fexample.com%2Fcallback&state=mockState&scope=mockScope&code_challenge_method=S256&code_challenge=mockCodeChallenge&nonce=mockNonce');
         expect(sessionStorage.setItem).toHaveBeenCalledWith('mockAuthData', JSON.stringify({
             state: 'mockState',

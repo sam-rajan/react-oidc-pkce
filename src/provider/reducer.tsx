@@ -1,9 +1,10 @@
 import { fetchToken } from "./auth/token"
 import { startAuthFlow } from "./auth/authorize"
 import { setupRefresher } from "./auth/refresh";
+import { logout } from "./auth/logout";
 
 export type Flow =    { type: "REGISTER"; callback: (result: string) => void | undefined }
-                    | { type: "SUCCESS" | "FAILED" | "TOKEN" | "REFRESHER" }
+                    | { type: "SUCCESS" | "FAILED" | "TOKEN" | "REFRESHER" | "LOGOUT" }
                     | { type: "AUTHORIZE"; isForce: boolean}
 
 export function flowController(state: any, action: Flow) {
@@ -29,6 +30,10 @@ export function flowController(state: any, action: Flow) {
         }
         case 'REFRESHER': {
             setupRefresher(state)
+            return mutate
+        }
+        case 'LOGOUT': {
+            logout(state)
             return mutate
         }
     }

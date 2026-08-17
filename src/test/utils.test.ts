@@ -1,4 +1,8 @@
-import { randomString, arrayBufferToBase64 } from '../provider/auth/utils';
+/**
+ * @jest-environment jsdom
+ */
+
+import { randomString, arrayBufferToBase64, decodeJwtPayload } from '../provider/auth/utils';
 
 describe('randomString', () => {
     it('should generate a random string of specified length', () => {
@@ -45,4 +49,12 @@ describe('arrayBufferToBase64', () => {
         });
     });
 
+});
+
+describe('decodeJwtPayload', () => {
+    it('should decode the base64url-encoded payload segment of a JWT', () => {
+        const token = 'header.eyJub25jZSI6Im1vY2tOb25jZSIsInN1YiI6InVzZXIxIn0.signature';
+
+        expect(decodeJwtPayload(token)).toEqual({ nonce: 'mockNonce', sub: 'user1' });
+    });
 });

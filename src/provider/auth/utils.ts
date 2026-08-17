@@ -1,13 +1,15 @@
-export function randomString(length: number): string {
-    const iteration = length / 10
+const RANDOM_STRING_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
 
-    let randomString = ""
-    for (let i = 0; i < iteration; i++) {
-        randomString += Math.random().toString(36).substring(2)
+export function randomString(length: number): string {
+    const randomValues = new Uint8Array(length)
+    window.crypto.getRandomValues(randomValues)
+
+    let result = ""
+    for (let i = 0; i < length; i++) {
+        result += RANDOM_STRING_CHARS[randomValues[i] % RANDOM_STRING_CHARS.length]
     }
 
-    randomString += Math.random().toString(36).substring(2)
-    return randomString.substring(0, length)
+    return result
 }
 
 export function arrayBufferToBase64(buffer: ArrayBuffer): string {
@@ -31,4 +33,11 @@ export function arrayBufferToBase64(buffer: ArrayBuffer): string {
     }
 
     return base64;
+}
+
+export function decodeJwtPayload(token: string): any {
+    const payload = token.split(".")[1]
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/")
+    const padded = base64.padEnd(base64.length + (4 - base64.length % 4) % 4, "=")
+    return JSON.parse(atob(padded))
 }
