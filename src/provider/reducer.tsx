@@ -1,40 +1,31 @@
-import { fetchToken } from "./auth/token"
-import { startAuthFlow } from "./auth/authorize"
-import { setupRefresher } from "./auth/refresh";
-import { logout } from "./auth/logout";
+import { OidcState } from "./state"
 
 export type Flow =    { type: "REGISTER"; callback: (result: string) => void | undefined }
                     | { type: "SUCCESS" | "FAILED" | "TOKEN" | "REFRESHER" | "LOGOUT" }
                     | { type: "AUTHORIZE"; isForce: boolean}
 
-export function flowController(state: any, action: Flow) {
+export function flowController(state: OidcState, action: Flow): OidcState {
 
-    const mutate = {
+    const mutate: OidcState = {
         config: state.config,
-        callback: state.callback
+        callback: state.callback,
+        refreshTimerRef: state.refreshTimerRef
     }
     switch (action.type) {
         case 'REGISTER': {
             return {
                 callback: action.callback,
-                config: state.config
+                config: state.config,
+                refreshTimerRef: state.refreshTimerRef
             };
         }
-        case 'TOKEN': {
-            fetchToken(state)
-            return mutate
-        }
-        case 'AUTHORIZE': {
-            startAuthFlow(state, action.isForce)
-            return mutate
-        }
-        case 'REFRESHER': {
-            setupRefresher(state)
-            return mutate
-        }
+        case 'TOKEN':
+        case 'AUTHORIZE':
+        case 'REFRESHER':
         case 'LOGOUT': {
-            logout(state)
             return mutate
         }
+        default:
+            return state
     }
 }

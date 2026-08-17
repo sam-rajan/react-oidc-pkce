@@ -30,6 +30,7 @@ const mockState = {
         autoTokenRefresh: false,
     },
     callback: jest.fn(),
+    refreshTimerRef: { current: null },
 };
 
 const VALID_ID_TOKEN = 'header.eyJub25jZSI6Im1vY2tOb25jZSJ9.signature';

@@ -13,7 +13,11 @@ describe('logout', () => {
     });
 
     it('should clear the auth session and invoke the callback with LOGGED_OUT', () => {
-        const mockState = { callback: jest.fn() };
+        const mockState = {
+            config: { oidcUrl: 'http://example.com/oidc', clientId: 'mockClientId', redirectUrl: 'http://example.com/callback', scope: 'mockScope' },
+            callback: jest.fn(),
+            refreshTimerRef: { current: null },
+        };
 
         logout(mockState);
 

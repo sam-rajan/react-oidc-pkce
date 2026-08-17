@@ -2,6 +2,9 @@ import { useContext } from "react"
 import { OIDCContext } from "./context"
 import { parseToken, isCredentialsValid, ACCESS_TOKEN, REFRESH_TOKEN, ID_TOKEN } from "./auth/creds"
 
+export interface AuthorizeOptions {
+    force?: boolean
+}
 
 export default function useAuthContext() {
     const authState = useContext(OIDCContext)
@@ -11,8 +14,8 @@ export default function useAuthContext() {
     }
 
     return {
-        authorize: (options: any) => {
-            authState?.action({ type: 'AUTHORIZE', isForce: options.force })
+        authorize: (options: AuthorizeOptions) => {
+            authState?.action({ type: 'AUTHORIZE', isForce: options.force ?? false })
         },
         getAccessToken: () => {
             return parseToken(ACCESS_TOKEN)
