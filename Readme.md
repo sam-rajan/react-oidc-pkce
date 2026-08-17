@@ -105,7 +105,11 @@ Method which intiates the authorzation flow, which accespts an options object wi
 
 #### registerCallback(authCallback: (result: string) => void) 
 
-For registering a authorization callback function. If auth operation is success, the specified callback function will be invoked with result `SUCCESS` else if is a failure then in will be invoked with result `FAILED`
+For registering a authorization callback function. If auth operation is success, the specified callback function will be invoked with result `SUCCESS` else if is a failure then in will be invoked with result `FAILED`. On `logout()`, it will be invoked with result `LOGGED_OUT`.
+
+#### logout()
+
+Clears the locally stored tokens and session state. This only ends the session on this device — it does not redirect to or end the session with your OIDC provider.
 
 #### getAccessToken(): string
 

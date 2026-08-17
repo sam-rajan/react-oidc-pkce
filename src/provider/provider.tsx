@@ -13,12 +13,15 @@ const OIDCContextProvider: FC<AuthProps> = (props) => {
     
     useEffect(() => {
         const url = new URL(window.location.href)
-        if (url.href.includes(props.oidcConfig.redirectUrl) &&
+        const redirectUrl = new URL(props.oidcConfig.redirectUrl)
+        const isRedirectMatch = url.origin === redirectUrl.origin && url.pathname === redirectUrl.pathname
+
+        if (isRedirectMatch &&
             url.searchParams.get('code') &&
-            url.searchParams.get('state')) { 
+            url.searchParams.get('state')) {
             action({ type: "TOKEN"})
             return
-        } 
+        }
 
         if (props.oidcConfig.autoTokenRefresh) {
             action({ type: "REFRESHER"})

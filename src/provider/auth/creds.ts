@@ -36,3 +36,15 @@ export function persistToken(token: any) {
         sessionStorage.setItem(REFRESH_TOKEN, token.refresh_token)
     }
 }
+
+export function clearPendingAuthData(): void {
+    sessionStorage.removeItem(AUTH_DATA)
+}
+
+export function clearAuthSession(): void {
+    clearPendingAuthData()
+    sessionStorage.removeItem(ACCESS_TOKEN)
+    sessionStorage.removeItem(EXPIRES_IN)
+    sessionStorage.removeItem(ID_TOKEN)
+    sessionStorage.removeItem(REFRESH_TOKEN)
+}

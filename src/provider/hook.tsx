@@ -28,6 +28,9 @@ export default function useAuthContext() {
         },
         registerCallback: (authCallback: (result: string) => void) => {
             authState?.action({type: 'REGISTER', callback: authCallback})
+        },
+        logout: () => {
+            authState?.action({ type: 'LOGOUT' })
         }
     }
 }
