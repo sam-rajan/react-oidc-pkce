@@ -1,12 +1,12 @@
 import { AUTH_DATA, clearPendingAuthData, isCredentialsValid, persistToken } from "./creds";
-import { OidcConfig } from "./config";
 import { setupRefresher } from "./refresh";
 import { callBackInvoker } from "./callback";
-import { exchangeForToken } from "./exchange";
+import { exchangeForToken, TokenResponse } from "./exchange";
 import { decodeJwtPayload } from "./utils";
+import { OidcState } from "../state";
 
 
-export const fetchToken = (state: any) => {
+export const fetchToken = (state: OidcState) => {
 
     if (isCredentialsValid()) {
         callBackInvoker(state.callback, 'SUCCESS')
@@ -14,7 +14,7 @@ export const fetchToken = (state: any) => {
     }
 
     const url = new URL(window.location.href)
-    const oidcConfig = state.config as OidcConfig
+    const oidcConfig = state.config
 
     const cleanUp = () => {
         clearPendingAuthData()
@@ -43,7 +43,7 @@ export const fetchToken = (state: any) => {
     data.append("code", url.searchParams.get("code") as string)
     data.append("code_verifier", authData.codeVerifier)
 
-    exchangeForToken(oidcConfig, data).then((result: any) => {
+    exchangeForToken(oidcConfig, data).then((result: TokenResponse) => {
         const idTokenPayload = decodeJwtPayload(result.id_token)
         if (idTokenPayload?.nonce !== authData!.nonce) {
             cleanUp()
@@ -57,7 +57,7 @@ export const fetchToken = (state: any) => {
         if (state.config.autoTokenRefresh) {
             setupRefresher(state)
         }
-    }, (error: any) => {
+    }, (error: unknown) => {
         console.error("Error:", error);
         cleanUp()
         callBackInvoker(state.callback, 'FAILED')

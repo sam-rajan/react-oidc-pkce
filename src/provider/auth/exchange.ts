@@ -1,6 +1,15 @@
 import { OidcConfig } from "./config"
 
-export const exchangeForToken = async (oidcConfig: OidcConfig, data: URLSearchParams): Promise<any> => {
+export interface TokenResponse {
+    access_token: string
+    id_token: string
+    refresh_token?: string
+    expires_in: number | string
+    token_type?: string
+    scope?: string
+}
+
+export const exchangeForToken = async (oidcConfig: OidcConfig, data: URLSearchParams): Promise<TokenResponse> => {
     
     const tokenUrl = new URL(oidcConfig.oidcUrl + "/token")
     data.append("client_id", oidcConfig.clientId)
@@ -13,7 +22,7 @@ export const exchangeForToken = async (oidcConfig: OidcConfig, data: URLSearchPa
         body: data.toString()
     })
 
-    if (response.status !== 200) {
+    if (!response.ok) {
         throw new Error("Request Failed, Error:" + await response.text());
     }
 

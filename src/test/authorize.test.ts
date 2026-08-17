@@ -16,6 +16,7 @@ const mockOidcState = {
         scope: 'mockScope',
     },
     callback: jest.fn(),
+    refreshTimerRef: { current: null },
 };
 
 const sessionStorageMock = {

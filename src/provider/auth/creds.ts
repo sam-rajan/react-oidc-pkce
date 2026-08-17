@@ -1,3 +1,5 @@
+import { TokenResponse } from "./exchange"
+
 export const TOKEN = "token"
 export const AUTH_DATA = "authData"
 
@@ -21,11 +23,11 @@ export function isCredentialsValid(): boolean {
     return true
 }
 
-export function parseToken(type: string): string | null{
-    return sessionStorage.getItem(type) === undefined ? null : sessionStorage.getItem(type) as string
+export function parseToken(type: string): string | null {
+    return sessionStorage.getItem(type)
 }
 
-export function persistToken(token: any) {
+export function persistToken(token: TokenResponse) {
     const expiry = new Date()
     expiry.setTime(expiry.getTime() + Number(token.expires_in) * 1000)
     sessionStorage.setItem(EXPIRES_IN, expiry.toISOString())

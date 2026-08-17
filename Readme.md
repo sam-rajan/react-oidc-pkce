@@ -127,6 +127,10 @@ Returns a ID token
 
 Returns whether current authentication is valid or not
 
+## Security considerations
+
+Access, ID, and refresh tokens are stored in `sessionStorage`. This is a deliberate choice so that a logged-in user stays logged in across a page reload within the same tab, but it means any script able to run on the page (e.g. via an XSS vulnerability elsewhere in your app) can read these tokens. Make sure your application has strong protections against XSS if it handles sensitive data.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to open issues or pull requests for any improvements, bug fixes, or new features.

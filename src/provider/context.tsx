@@ -1,8 +1,9 @@
 import React, { createContext } from "react"
 import { Flow } from "./reducer"
+import { OidcState } from "./state"
 
 export interface OidcContextState {
-    state: any,
+    state: OidcState,
     action: React.Dispatch<Flow>
 }
 

@@ -3,15 +3,18 @@ import { AUTH_DATA, clearAuthSession, isCredentialsValid } from "./creds";
 import { arrayBufferToBase64, randomString } from "./utils";
 import { OidcConfig } from "./config";
 import { callBackInvoker } from "./callback";
+import { clearRefreshTimer } from "./refresh";
+import { OidcState } from "../state";
 
-export const startAuthFlow = async (oidcState: any, force: boolean) => {
+export const startAuthFlow = async (oidcState: OidcState, force: boolean) => {
     
     if (isCredentialsValid() && !force) {
         callBackInvoker(oidcState.callback, 'SUCCESS')
         return
     }
 
-    var config: OidcConfig = oidcState.config as OidcConfig
+    var config: OidcConfig = oidcState.config
+    clearRefreshTimer(oidcState)
     clearAuthSession()
     const authUrl = new URL(config.oidcUrl + "/authorize")
     authUrl.searchParams.append("response_type", "code")
