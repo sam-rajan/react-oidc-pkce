@@ -1,6 +1,5 @@
 import { TokenResponse } from "./exchange"
 
-export const TOKEN = "token"
 export const AUTH_DATA = "authData"
 
 export const ACCESS_TOKEN = "accessToken"
