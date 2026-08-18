@@ -2,6 +2,7 @@ module.exports = {
   testPathIgnorePatterns: [
     "/node_modules/",
     "/dist/",
-    "/\\.rollup\\.cache/"
+    "/\\.rollup\\.cache/",
+    "/e2e/"
   ]
 };
