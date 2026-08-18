@@ -133,4 +133,14 @@ Access, ID, and refresh tokens are stored in `sessionStorage`. This is a deliber
 
 ## Contributing
 
-Contributions are welcome! Please feel free to open issues or pull requests for any improvements, bug fixes, or new features.
+Contributions are welcome and appreciated — bug reports, feature ideas, documentation fixes, and pull requests all help. To get started:
+
+```
+git clone https://github.com/sam-rajan/react-oidc-pkce.git
+cd react-oidc-pkce
+npm install
+npm test          # unit tests
+npm run test:e2e  # end-to-end tests (first run also installs a local browser via `npm run test:e2e:install`)
+```
+
+Every pull request runs the same unit and end-to-end suites in CI, so please make sure both pass locally before opening one. For anything bigger than a small fix, feel free to open an issue first so we can discuss the approach before you put in the work.
