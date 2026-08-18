@@ -1,6 +1,6 @@
 {
   "name": "react-oidc-pkce",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "React Context API provider implementation for Open ID connect Authorization code flow with PKCE",
   "scripts": {
     "build": "rollup -c",
@@ -10,7 +10,12 @@
   "license": "ISC",
   "type": "module",
   "files": [
-    "dist"
+    "dist/cjs/index.js",
+    "dist/cjs/index.js.map",
+    "dist/cjs/package.json",
+    "dist/esm/index.js",
+    "dist/esm/index.js.map",
+    "dist/index.d.ts"
   ],
   "devDependencies": {
     "@babel/preset-env": "^7.23.9",
@@ -18,7 +23,7 @@
     "@babel/preset-typescript": "^7.23.3",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^11.1.5",
     "@testing-library/react": "^14.2.1",
     "@types/jest": "^29.5.12",
@@ -39,7 +44,7 @@
     "typescript": "^4.9.5"
   },
   "dependencies": {
-    "uuid": "^9.0.1"
+    "uuid": "^11.1.1"
   },
   "peerDependencies": {
     "react": "^18.2.0",

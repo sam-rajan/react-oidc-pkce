@@ -8,7 +8,24 @@ import terser from "@rollup/plugin-terser";
 
 import packageJson from "./package.json" with { type: "json" };
 
-
+// Emits a dist/cjs/package.json marking that directory as CommonJS.
+// Without it, Node treats dist/cjs/index.js as ESM (inheriting "type":
+// "module" from the root package.json) despite it being CJS-formatted
+// output, and require() silently resolves to no exports.
+function emitCjsPackageJson() {
+    return {
+        name: "emit-cjs-package-json",
+        generateBundle(outputOptions) {
+            if (outputOptions.format === "cjs") {
+                this.emitFile({
+                    type: "asset",
+                    fileName: "package.json",
+                    source: JSON.stringify({ type: "commonjs" }, null, 2)
+                })
+            }
+        }
+    }
+}
 
 export default [
     {
@@ -32,7 +49,8 @@ export default [
           nodeResolve(),
           commonjs({sourceMap: false}),
           typescript({ tsconfig: "./tsconfig.json", sourceMap: false }),
-          terser({sourceMap: false})
+          terser({sourceMap: false}),
+          emitCjsPackageJson()
         ],
       },
       {
