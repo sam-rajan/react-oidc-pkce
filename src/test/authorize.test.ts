@@ -6,6 +6,8 @@ import { startAuthFlow } from '../provider/auth/authorize';
 import { clearAuthSession, isCredentialsValid } from '../provider/auth/creds';
 import { arrayBufferToBase64, randomString } from '../provider/auth/utils';
 import * as invoker from "../provider/auth/callback";
+// @ts-expect-error -- Node's "util" types aren't part of this program (see
+// tsconfig.json's scoped "types"); this resolves fine at runtime via Jest.
 import { TextEncoder, TextDecoder } from "util";
 
 const mockOidcState = {
@@ -23,7 +25,7 @@ const sessionStorageMock = {
     setItem: jest.fn()
 }
 
-Object.assign(global, { TextEncoder, TextDecoder });
+Object.assign(globalThis, { TextEncoder, TextDecoder });
 Object.assign(window.crypto, {
     subtle: {
         digest: jest.fn()
