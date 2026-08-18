@@ -24,5 +24,7 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-  }
+    "types": ["jest"],
+  },
+  "exclude": ["e2e"]
 }

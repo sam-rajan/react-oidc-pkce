@@ -10,11 +10,11 @@ const mockConfig: OidcConfig = {
 
 describe('exchangeForToken', () => {
     beforeEach(() => {
-        (global as any).fetch = jest.fn();
+        (globalThis as any).fetch = jest.fn();
     });
 
     it('should resolve with the parsed JSON body for any 2xx response', async () => {
-        (global.fetch as jest.Mock).mockResolvedValue({
+        (globalThis.fetch as jest.Mock).mockResolvedValue({
             ok: true,
             status: 201,
             json: () => Promise.resolve({ access_token: 'a' }),
@@ -26,7 +26,7 @@ describe('exchangeForToken', () => {
     });
 
     it('should throw for a non-2xx response', async () => {
-        (global.fetch as jest.Mock).mockResolvedValue({
+        (globalThis.fetch as jest.Mock).mockResolvedValue({
             ok: false,
             status: 400,
             text: () => Promise.resolve('invalid_grant'),
