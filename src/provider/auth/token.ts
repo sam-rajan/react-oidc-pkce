@@ -44,11 +44,21 @@ export const fetchToken = (state: OidcState) => {
     data.append("code_verifier", authData.codeVerifier)
 
     exchangeForToken(oidcConfig, data).then((result: TokenResponse) => {
-        const idTokenPayload = decodeJwtPayload(result.id_token)
-        if (idTokenPayload?.nonce !== authData!.nonce) {
-            cleanUp()
-            callBackInvoker(state.callback, 'FAILED')
-            return
+        const requestsOpenId = oidcConfig.scope.split(/\s+/).includes('openid')
+
+        if (requestsOpenId) {
+            if (!result.id_token) {
+                cleanUp()
+                callBackInvoker(state.callback, 'FAILED')
+                return
+            }
+
+            const idTokenPayload = decodeJwtPayload(result.id_token)
+            if (idTokenPayload?.nonce !== authData!.nonce) {
+                cleanUp()
+                callBackInvoker(state.callback, 'FAILED')
+                return
+            }
         }
 
         persistToken(result)

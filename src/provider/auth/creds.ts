@@ -31,7 +31,10 @@ export function persistToken(token: TokenResponse) {
     expiry.setTime(expiry.getTime() + Number(token.expires_in) * 1000)
     sessionStorage.setItem(EXPIRES_IN, expiry.toISOString())
     sessionStorage.setItem(ACCESS_TOKEN, token.access_token)
-    sessionStorage.setItem(ID_TOKEN, token.id_token)
+
+    if (token.id_token) {
+        sessionStorage.setItem(ID_TOKEN, token.id_token)
+    }
 
     if (token.refresh_token) {
         sessionStorage.setItem(REFRESH_TOKEN, token.refresh_token)

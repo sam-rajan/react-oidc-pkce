@@ -2,7 +2,7 @@ import { OidcConfig } from "./config"
 
 export interface TokenResponse {
     access_token: string
-    id_token: string
+    id_token?: string
     refresh_token?: string
     expires_in: number | string
     token_type?: string

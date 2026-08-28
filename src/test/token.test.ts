@@ -26,7 +26,7 @@ const mockState = {
         oidcUrl: 'http://example.com/oidc',
         clientId: 'mockClientId',
         redirectUrl: 'http://example.com/callback',
-        scope: 'mockScope',
+        scope: 'openid email',
         autoTokenRefresh: false,
     },
     callback: jest.fn(),
@@ -107,6 +107,33 @@ describe('fetchToken', () => {
         expect(persistToken).not.toHaveBeenCalled();
         expect(invoker.callBackInvoker).toHaveBeenCalledWith(mockState.callback, 'FAILED');
         expect(clearPendingAuthData).toHaveBeenCalled();
+    });
+
+    it('should invoke callback with FAILED and not persist tokens when openid was requested but no id_token is returned', async () => {
+        (isCredentialsValid as jest.Mock).mockReturnValue(false);
+        sessionStorageMock.getItem.mockReturnValue(JSON.stringify({ state: 'mockState', codeVerifier: 'v', nonce: 'mockNonce' }));
+        (exchangeForToken as jest.Mock).mockResolvedValue({ access_token: 'a' });
+
+        fetchToken(mockState);
+        await flushPromises();
+
+        expect(persistToken).not.toHaveBeenCalled();
+        expect(invoker.callBackInvoker).toHaveBeenCalledWith(mockState.callback, 'FAILED');
+        expect(clearPendingAuthData).toHaveBeenCalled();
+    });
+
+    it('should succeed on a missing id_token when openid was not requested', async () => {
+        const nonOidcState = { ...mockState, config: { ...mockState.config, scope: 'profile' } };
+        (isCredentialsValid as jest.Mock).mockReturnValue(false);
+        sessionStorageMock.getItem.mockReturnValue(JSON.stringify({ state: 'mockState', codeVerifier: 'v', nonce: 'mockNonce' }));
+        const tokenResponse = { access_token: 'a', expires_in: 3600 };
+        (exchangeForToken as jest.Mock).mockResolvedValue(tokenResponse);
+
+        fetchToken(nonOidcState);
+        await flushPromises();
+
+        expect(persistToken).toHaveBeenCalledWith(tokenResponse);
+        expect(invoker.callBackInvoker).toHaveBeenCalledWith(nonOidcState.callback, 'SUCCESS');
     });
 
     it('should persist tokens, clear auth data and clean up the URL on a successful exchange', async () => {
